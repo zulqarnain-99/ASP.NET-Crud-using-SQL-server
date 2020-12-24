@@ -51,7 +51,8 @@ namespace ASP.NET_CRUD
                 sqlcmd.ExecuteNonQuery();
                 sqlcon.Close();
                 Clear();
-                if (hfContactId.Value == "")
+                string contactId = hfContactId.Value;
+                if (contactId == "")
                 {
                     lblSuccessMessage.Text = "Saved Successfully";
                 }
@@ -77,6 +78,28 @@ namespace ASP.NET_CRUD
                 gvContact.DataSource = dtbl;
                 gvContact.DataBind(); 
 
+            }
+        }
+
+        protected void lnk_OnClick(object sender, EventArgs e)
+        {
+            int contactID = Convert.ToInt32((sender as LinkButton).CommandArgument);
+            if (sqlcon.State == ConnectionState.Closed)
+            {
+                sqlcon.Open();
+                SqlCommand sqlcmd = new SqlCommand("contactViewByID", sqlcon);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.Parameters.AddWithValue("@ContactID", contactID);
+                SqlDataAdapter sqlDa = new SqlDataAdapter("contactViewAll", sqlcon);
+                DataTable dtbl = new DataTable();
+                sqlDa.Fill(dtbl);
+                sqlcon.Close();
+                hfContactId.Value = contactID.ToString();
+                txtName.Text = dtbl.Rows[0]["Name"].ToString();
+                txtMobile.Text = dtbl.Rows[0]["Name"].ToString();
+                txtAddress.Text = dtbl.Rows[0]["Address"].ToString();
+                btnSave.Text = "Update";
+                btnDelete.Enabled = true; 
             }
         }
     }
