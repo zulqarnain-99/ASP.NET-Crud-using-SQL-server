@@ -102,5 +102,21 @@ namespace ASP.NET_CRUD
                 btnDelete.Enabled = true; 
             }
         }
+
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (sqlcon.State == ConnectionState.Closed)
+            {
+                sqlcon.Open();
+                SqlCommand sqlcmd = new SqlCommand("contactDeletebyID", sqlcon);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.Parameters.AddWithValue("@ContactID", Convert.ToInt32(hfContactId.Value));
+                sqlcmd.ExecuteNonQuery();
+                sqlcon.Close();
+                Clear();
+                FillGridView();
+                lblSuccessMessage.Text = "Deleted Successfully";
+            }
+        }
     }
 }
